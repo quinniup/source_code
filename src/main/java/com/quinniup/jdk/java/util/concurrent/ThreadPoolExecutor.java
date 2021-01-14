@@ -1300,6 +1300,16 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      * @throws NullPointerException if {@code workQueue}
      *         or {@code threadFactory} or {@code handler} is null
      */
+    /**
+     * 线程池
+     * @param corePoolSize      核心线程数
+     * @param maximumPoolSize   最大线程数
+     * @param keepAliveTime     空闲线程最大存活时间
+     * @param unit              时间单位
+     * @param workQueue         阻塞队列
+     * @param threadFactory     线程工厂
+     * @param handler           拒绝策略
+     */
     public ThreadPoolExecutor(int corePoolSize,
                               int maximumPoolSize,
                               long keepAliveTime,
@@ -2020,6 +2030,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      * unless the executor has been shut down, in which case the task
      * is discarded.
      */
+    // 执行任务
     public static class CallerRunsPolicy implements RejectedExecutionHandler {
         /**
          * Creates a {@code CallerRunsPolicy}.
@@ -2044,6 +2055,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      * A handler for rejected tasks that throws a
      * {@code RejectedExecutionException}.
      */
+    // 抛出异常，放弃任务
     public static class AbortPolicy implements RejectedExecutionHandler {
         /**
          * Creates an {@code AbortPolicy}.
@@ -2068,6 +2080,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      * A handler for rejected tasks that silently discards the
      * rejected task.
      */
+    // 忽略任务，什么都不处理
     public static class DiscardPolicy implements RejectedExecutionHandler {
         /**
          * Creates a {@code DiscardPolicy}.
@@ -2089,6 +2102,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      * request and then retries {@code execute}, unless the executor
      * is shut down, in which case the task is discarded.
      */
+    // 从线程池队列中剔除第一个任务，添加当前任务
     public static class DiscardOldestPolicy implements RejectedExecutionHandler {
         /**
          * Creates a {@code DiscardOldestPolicy} for the given executor.

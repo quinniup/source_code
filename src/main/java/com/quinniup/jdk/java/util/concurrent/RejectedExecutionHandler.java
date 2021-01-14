@@ -41,6 +41,7 @@ package java.util.concurrent;
  * @since 1.5
  * @author Doug Lea
  */
+// 线程池拒绝策略 父类
 public interface RejectedExecutionHandler {
 
     /**
