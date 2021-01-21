@@ -1,4 +1,4 @@
-package com.quinniup.interview.algorithm.sort.quick.sort;
+package com.quinniup.extension.algorithm.sort.quick.sort;
 
 import java.util.Arrays;
 

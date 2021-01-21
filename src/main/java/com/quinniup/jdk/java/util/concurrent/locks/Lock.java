@@ -164,10 +164,16 @@ import java.util.concurrent.TimeUnit;
  * @since 1.5
  * @author Doug Lea
  */
+
+/** 锁的类，包含三类：
+ * @see ReentrantLock 可重入锁
+ * @see Condition   与wait()/notify()相对应，用于线程通信
+ * @see ReadWriteLock 读写锁
+ */
 public interface Lock {
 
     /**
-     * Acquires the lock.
+     * Acquires the lock. 请求加锁
      *
      * <p>If the lock is not available then the current thread becomes
      * disabled for thread scheduling purposes and lies dormant until the
@@ -321,7 +327,7 @@ public interface Lock {
     boolean tryLock(long time, TimeUnit unit) throws InterruptedException;
 
     /**
-     * Releases the lock.
+     * Releases the lock. 释放锁
      *
      * <p><b>Implementation Considerations</b>
      *

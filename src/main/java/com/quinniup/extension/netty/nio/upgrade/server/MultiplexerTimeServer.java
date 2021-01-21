@@ -1,4 +1,4 @@
-package com.quinniup.interview.netty.nio.upgrade.server;
+package com.quinniup.extension.netty.nio.upgrade.server;
 
 import io.netty.util.internal.StringUtil;
 
@@ -11,7 +11,6 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalTime;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
 

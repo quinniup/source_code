@@ -1,7 +1,6 @@
-package com.quinniup.interview.algorithm.lru;
+package com.quinniup.extension.algorithm.lru;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 /**

@@ -181,11 +181,12 @@ import java.util.NoSuchElementException;
  * @author Mark Reinhold
  * @since 1.6
  */
-
+// Java SPI 通过ServiceLoader实现类
 public final class ServiceLoader<S>
     implements Iterable<S>
 {
 
+    // 指定配置文件位置路径
     private static final String PREFIX = "META-INF/services/";
 
     // The class or interface representing the service being loaded
@@ -219,10 +220,12 @@ public final class ServiceLoader<S>
         lookupIterator = new LazyIterator(service, loader);
     }
 
+    // 3. 构造方法中进行参数的校验，如果没有指定类加载器就使用系统默认的类加载器 ClassLoader
     private ServiceLoader(Class<S> svc, ClassLoader cl) {
         service = Objects.requireNonNull(svc, "Service interface cannot be null");
         loader = (cl == null) ? ClassLoader.getSystemClassLoader() : cl;
         acc = (System.getSecurityManager() != null) ? AccessController.getContext() : null;
+        // 通过 reload() 方法创建一个懒加载迭代器LazyIterator
         reload();
     }
 
@@ -339,9 +342,12 @@ public final class ServiceLoader<S>
             if (nextName != null) {
                 return true;
             }
+            // 第一次调用 configs 肯定是null对象
             if (configs == null) {
                 try {
+                    // 这里 PREFIX 也就说明配置文件为什么要放在 META-INF/services 下，并且要用类名命名
                     String fullName = PREFIX + service.getName();
+                    // 加载器为空的情况下，则使用系统类加载器获取资源
                     if (loader == null)
                         configs = ClassLoader.getSystemResources(fullName);
                     else
@@ -360,6 +366,7 @@ public final class ServiceLoader<S>
             return true;
         }
 
+        // 调用next方法的时候所执行的流程
         private S nextService() {
             if (!hasNextService())
                 throw new NoSuchElementException();
@@ -367,6 +374,7 @@ public final class ServiceLoader<S>
             nextName = null;
             Class<?> c = null;
             try {
+                 // 通过类反射进行加载实现类
                 c = Class.forName(cn, false, loader);
             } catch (ClassNotFoundException x) {
                 fail(service,
@@ -377,7 +385,9 @@ public final class ServiceLoader<S>
                      "Provider " + cn  + " not a subtype");
             }
             try {
+                // 通过Class的 newInstance() new 一个对象，case方法只是做强制类型转换
                 S p = service.cast(c.newInstance());
+                // 将此对象放入已加载对象的LinkedHashMap中去
                 providers.put(cn, p);
                 return p;
             } catch (Throwable x) {
@@ -388,6 +398,7 @@ public final class ServiceLoader<S>
             throw new Error();          // This cannot happen
         }
 
+        // 进入此处的逻辑
         public boolean hasNext() {
             if (acc == null) {
                 return hasNextService();
@@ -467,7 +478,9 @@ public final class ServiceLoader<S>
 
             Iterator<Map.Entry<String,S>> knownProviders
                 = providers.entrySet().iterator();
-
+            // hasNext()就是这里了
+            // 通过判断肯定进入LazyIterator的迭代器中， 即lookupIterator.hasNext()，
+            // 因为providers在reload()中被执行了clear(),所以knownProviders中没有元素
             public boolean hasNext() {
                 if (knownProviders.hasNext())
                     return true;
@@ -504,6 +517,8 @@ public final class ServiceLoader<S>
      *
      * @return A new service loader
      */
+    // 2. 这里不难看出如果没有指定加载就会使用系统默认的加载器
+    // 所以说我们也可以指定自己所需要的类加载器
     public static <S> ServiceLoader<S> load(Class<S> service,
                                             ClassLoader loader)
     {
@@ -534,6 +549,7 @@ public final class ServiceLoader<S>
      * @return A new service loader
      */
     public static <S> ServiceLoader<S> load(Class<S> service) {
+        // 通过当前线程上下文类加载器
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         return ServiceLoader.load(service, cl);
     }

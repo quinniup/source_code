@@ -1,4 +1,4 @@
-package com.quinniup.interview.netty.nio.upgrade.client;
+package com.quinniup.extension.netty.nio.upgrade.client;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

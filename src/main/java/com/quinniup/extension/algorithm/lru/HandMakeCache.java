@@ -1,4 +1,4 @@
-package com.quinniup.interview.algorithm.lru;
+package com.quinniup.extension.algorithm.lru;
 
 /**
  * @ClassName: HandMakeCache
