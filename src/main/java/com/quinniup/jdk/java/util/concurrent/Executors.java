@@ -85,6 +85,12 @@ public class Executors {
      * @return the newly created thread pool
      * @throws IllegalArgumentException if {@code nThreads <= 0}
      */
+    /**
+     * 一定量线程数的线程池，可限制最大并发数
+     * 由于队列是无边界，不推荐使用
+     * @param nThreads
+     * @return
+     */
     public static ExecutorService newFixedThreadPool(int nThreads) {
         return new ThreadPoolExecutor(nThreads, nThreads,
                                       0L, TimeUnit.MILLISECONDS,
@@ -167,6 +173,10 @@ public class Executors {
      *
      * @return the newly created single-threaded Executor
      */
+    /**
+     * 单线程模式线程池，阻塞队列是先进先出
+     * @return
+     */
     public static ExecutorService newSingleThreadExecutor() {
         return new FinalizableDelegatedExecutorService
             (new ThreadPoolExecutor(1, 1,
@@ -211,6 +221,11 @@ public class Executors {
      * may be created using {@link ThreadPoolExecutor} constructors.
      *
      * @return the newly created thread pool
+     */
+    /**
+     * 可缓存线程池
+     * 默认线程存活时间为60s，最大线程数为2^32-1
+     * @return
      */
     public static ExecutorService newCachedThreadPool() {
         return new ThreadPoolExecutor(0, Integer.MAX_VALUE,
@@ -295,6 +310,12 @@ public class Executors {
      * @return a newly created scheduled thread pool
      * @throws IllegalArgumentException if {@code corePoolSize < 0}
      * @throws NullPointerException if threadFactory is null
+     */
+    /**
+     * 支持定时、周期性任务的线程池
+     * @param corePoolSize
+     * @param threadFactory
+     * @return
      */
     public static ScheduledExecutorService newScheduledThreadPool(
             int corePoolSize, ThreadFactory threadFactory) {

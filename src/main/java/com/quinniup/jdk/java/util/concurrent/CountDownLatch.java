@@ -153,6 +153,11 @@ import java.util.concurrent.locks.AbstractQueuedSynchronizer;
  * @since 1.5
  * @author Doug Lea
  */
+
+/**
+ * 使用AQS同步状态标识计数。
+ * 计数为0时，所有的Acquire操作(CountDownLatch的await())才可以通过
+ */
 public class CountDownLatch {
     /**
      * Synchronization control For CountDownLatch.

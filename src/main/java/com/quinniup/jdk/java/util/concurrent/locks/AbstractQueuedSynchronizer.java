@@ -286,6 +286,14 @@ import sun.misc.Unsafe;
  * @since 1.5
  * @author Doug Lea
  */
+
+/**
+ * Java中JUC包的基础
+ * 思想：如果被请求的共享资源空闲，那么就将当前请求资源的线程设置为有效的工作线程，将共享资源设置为锁定状态；
+ * 如果共享资源被占用，那就需要一定的阻塞等待唤醒机制来保证锁分配。
+ * 这个机制主要用的是CLH队列的变体所实现的，将暂时获取不到锁的线程加入到队列中。
+ * CLH是一个单向链表，AQS中的队列是CLH变体的虚拟双向队列(FIFO)，AQS是通过每条请求共享资源的线程封装成一个节点来实现锁的分配。
+ */
 public abstract class AbstractQueuedSynchronizer
     extends AbstractOwnableSynchronizer
     implements java.io.Serializable {
@@ -379,20 +387,26 @@ public abstract class AbstractQueuedSynchronizer
      */
     static final class Node {
         /** Marker to indicate a node is waiting in shared mode */
+        // 标识线程以共享模式等待锁
         static final Node SHARED = new Node();
         /** Marker to indicate a node is waiting in exclusive mode */
+        // 标识线程以独占模式等待锁
         static final Node EXCLUSIVE = null;
 
         /** waitStatus value to indicate thread has cancelled */
+        // 标识线程获取锁的请求已经取消
         static final int CANCELLED =  1;
         /** waitStatus value to indicate successor's thread needs unparking */
+        // 标识线程已经就绪，等待资源释放
         static final int SIGNAL    = -1;
         /** waitStatus value to indicate thread is waiting on condition */
+        // 标识节点在等待队列中，节点线程等待唤醒
         static final int CONDITION = -2;
         /**
          * waitStatus value to indicate the next acquireShared should
          * unconditionally propagate
          */
+        // 当前线程处于Shared模式下，此字段才生效
         static final int PROPAGATE = -3;
 
         /**
@@ -429,6 +443,7 @@ public abstract class AbstractQueuedSynchronizer
          * CONDITION for condition nodes.  It is modified using CAS
          * (or when possible, unconditional volatile writes).
          */
+        // 标识当前节点在队列中的状态
         volatile int waitStatus;
 
         /**
@@ -442,6 +457,7 @@ public abstract class AbstractQueuedSynchronizer
          * cancelled thread never succeeds in acquiring, and a thread only
          * cancels itself, not any other node.
          */
+        // 前驱指针
         volatile Node prev;
 
         /**
@@ -457,12 +473,14 @@ public abstract class AbstractQueuedSynchronizer
          * point to the node itself instead of null, to make life
          * easier for isOnSyncQueue.
          */
+        // 后继指针
         volatile Node next;
 
         /**
          * The thread that enqueued this node.  Initialized on
          * construction and nulled out after use.
          */
+        // 标识处于当前节点的线程
         volatile Thread thread;
 
         /**
@@ -475,6 +493,7 @@ public abstract class AbstractQueuedSynchronizer
          * we save a field by using special value to indicate shared
          * mode.
          */
+        // 指向下一个处于condition状态的节点
         Node nextWaiter;
 
         /**
@@ -530,6 +549,18 @@ public abstract class AbstractQueuedSynchronizer
     /**
      * The synchronization state.
      */
+    // 同步状态，标识当前邻接资源的获取锁情况
+    // state值相关的几个方法都是final修饰符修饰，说明子类无法进行重写。
+    /**
+     * 独占模式：
+     *  线程A独占请求获取临界资源，如果state==0，更新state=1，并执行后续操作；
+     *                         如果state!=0，阻塞线程A
+     *
+     * 共享模式：
+     *  初始化state=n，线程A、B、C、D进行共享操作
+     *  尝试获取同步状态，state<=0，线程X进行阻塞
+     *                  state>0，state通过CAS进行自减，然后进行后续操作。
+     */
     private volatile int state;
 
     /**
@@ -537,6 +568,7 @@ public abstract class AbstractQueuedSynchronizer
      * This operation has memory semantics of a {@code volatile} read.
      * @return current state value
      */
+    // 获取state的值
     protected final int getState() {
         return state;
     }
@@ -546,6 +578,7 @@ public abstract class AbstractQueuedSynchronizer
      * This operation has memory semantics of a {@code volatile} write.
      * @param newState the new state value
      */
+    // 设置state的值
     protected final void setState(int newState) {
         state = newState;
     }
@@ -561,6 +594,7 @@ public abstract class AbstractQueuedSynchronizer
      * @return {@code true} if successful. False return indicates that the actual
      *         value was not equal to the expected value.
      */
+    // 通过CAS方式进行state值更新
     protected final boolean compareAndSetState(int expect, int update) {
         // See below for intrinsics setup to support this
         return unsafe.compareAndSwapInt(this, stateOffset, expect, update);
@@ -1159,6 +1193,11 @@ public abstract class AbstractQueuedSynchronizer
      *         correctly.
      * @throws UnsupportedOperationException if shared mode is not supported
      */
+    /**
+     * 共享模式：arg为释放锁的次数，尝试释放资源，如果释放后允许唤醒后续等待节点将返回True，否则返回False
+     * @param arg
+     * @return
+     */
     protected boolean tryReleaseShared(int arg) {
         throw new UnsupportedOperationException();
     }
@@ -1177,6 +1216,11 @@ public abstract class AbstractQueuedSynchronizer
      * @return {@code true} if synchronization is held exclusively;
      *         {@code false} otherwise
      * @throws UnsupportedOperationException if conditions are not supported
+     */
+    /**
+     * ReentrantLock实现的方法
+     * 判断线程是否正在独占资源，只有用到Condition时才需要实现它
+     * @return
      */
     protected boolean isHeldExclusively() {
         throw new UnsupportedOperationException();

@@ -320,6 +320,11 @@ import java.util.*;
  * @since 1.5
  * @author Doug Lea
  */
+
+/**
+ * Woker利用AQS同步状态实现对独占线程变量的设置
+ * tryRelease()、tryAcquire()
+ */
 public class ThreadPoolExecutor extends AbstractExecutorService {
     /**
      * The main pool control state, ctl, is an atomic integer packing
@@ -1263,6 +1268,16 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      * @throws NullPointerException if {@code workQueue}
      *         or {@code handler} is null
      */
+    /**
+     *
+     * @param corePoolSize      核心线程数
+     * @param maximumPoolSize   最大线程数
+     * @param keepAliveTime     空闲线程存活时间
+     * @param unit              时间单位
+     * @param workQueue         工作队列
+     * @param threadFactory     线程工厂
+     * @param handler           拒绝策略
+     */
     public ThreadPoolExecutor(int corePoolSize,
                               int maximumPoolSize,
                               long keepAliveTime,
@@ -1752,6 +1767,11 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      *
      * @return the task queue
      */
+    /**
+     * 获取阻塞队列中未完成的任务
+     * 可通过workQueue.size()统计数量
+     * @return
+     */
     public BlockingQueue<Runnable> getQueue() {
         return workQueue;
     }
@@ -1816,6 +1836,10 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      *
      * @return the number of threads
      */
+    /**
+     * 统计工作任务数
+     * @return
+     */
     public int getPoolSize() {
         final ReentrantLock mainLock = this.mainLock;
         mainLock.lock();
@@ -1834,6 +1858,10 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      * executing tasks.
      *
      * @return the number of threads
+     */
+    /**
+     * 统计当前工作中的任务数
+     * @return
      */
     public int getActiveCount() {
         final ReentrantLock mainLock = this.mainLock;
@@ -1855,6 +1883,10 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      *
      * @return the number of threads
      */
+    /**
+     * 获取最大
+     * @return
+     */
     public int getLargestPoolSize() {
         final ReentrantLock mainLock = this.mainLock;
         mainLock.lock();
@@ -1872,6 +1904,10 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      * value is only an approximation.
      *
      * @return the number of tasks
+     */
+    /**
+     * 统计当前任务总数
+     * @return
      */
     public long getTaskCount() {
         final ReentrantLock mainLock = this.mainLock;
@@ -1897,6 +1933,10 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      * across successive calls.
      *
      * @return the number of tasks
+     */
+    /**
+     *  统计已经完成任务的数量
+     * @return
      */
     public long getCompletedTaskCount() {
         final ReentrantLock mainLock = this.mainLock;
@@ -2023,6 +2063,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
     protected void terminated() { }
 
     /* Predefined RejectedExecutionHandlers */
+    /* JDK所提供的四种拒绝策略    */
 
     /**
      * A handler for rejected tasks that runs the rejected task

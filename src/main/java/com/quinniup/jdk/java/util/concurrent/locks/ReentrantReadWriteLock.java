@@ -212,6 +212,10 @@ import java.util.Collection;
  * @since 1.5
  * @author Doug Lea
  */
+
+/**
+ * 使用AQS同步状态中的16位保存写锁持有的次数，高16位用于保存读锁持有的次数
+ */
 public class ReentrantReadWriteLock
         implements ReadWriteLock, java.io.Serializable {
     private static final long serialVersionUID = -6992448646407690164L;
