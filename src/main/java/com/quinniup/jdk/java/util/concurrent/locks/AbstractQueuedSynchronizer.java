@@ -636,12 +636,22 @@ public abstract class AbstractQueuedSynchronizer
      * @param mode Node.EXCLUSIVE for exclusive, Node.SHARED for shared
      * @return the new node
      */
+    /**
+     * 获取锁失败后会加入到等待队列
+     * @param mode
+     * @return
+     */
     private Node addWaiter(Node mode) {
+        // 把当前线程构建成一个Node
         Node node = new Node(Thread.currentThread(), mode);
         // Try the fast path of enq; backup to full enq on failure
+        // 前驱指针指向尾结点tail
         Node pred = tail;
         if (pred != null) {
+            // 将当前线程构建的节点的前驱指针指向pred这个节点
             node.prev = pred;
+            // 通过compareAndSetTail完成尾结点设置
+            // 主要是对tailOffset和Expect进行比较，如果tailOffset的Node和Expect的Node的地址相同，那么就设置Tail的值为Update值
             if (compareAndSetTail(pred, node)) {
                 pred.next = node;
                 return node;
@@ -1237,6 +1247,12 @@ public abstract class AbstractQueuedSynchronizer
      * @param arg the acquire argument.  This value is conveyed to
      *        {@link #tryAcquire} but is otherwise uninterpreted and
      *        can represent anything you like.
+     */
+    /**
+     * AQS只是简单实现，具体获取锁的实现方法由各自的公平锁和非公平锁进行单独实现
+     * 如果此方法返回False，则需要加入到等待队列中
+     * 如果返回True，则说明当前线程获取锁成功，就不再继续往后执行。
+     * @param arg
      */
     public final void acquire(int arg) {
         if (!tryAcquire(arg) &&
