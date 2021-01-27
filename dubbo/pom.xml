@@ -14,6 +14,15 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+
+        <dubbo.all.version>2.7.8</dubbo.all.version>
     </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.dubbo</groupId>
+            <artifactId>dubbo</artifactId>
+            <version>${dubbo.all.version}</version>
+        </dependency>
+    </dependencies>
 </project>

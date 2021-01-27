@@ -23,13 +23,21 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
-        <netty-all.version>4.1.56.Final</netty-all.version>
-        <spring.version>5.2.8.RELEASE</spring.version>
-        <spring.boot.version>2.3.0.RELEASE</spring.boot.version>
+        <maven.package.assembly>3.2.0</maven.package.assembly>
     </properties>
 
-    <dependencies>
-
-    </dependencies>
-
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>${maven.package.assembly}</version>
+                <configuration>
+                    <descriptors>
+                        <descriptor>assembly/package.xml</descriptor>
+                    </descriptors>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
