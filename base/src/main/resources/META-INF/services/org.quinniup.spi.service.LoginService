@@ -1,0 +1,2 @@
+org.quinniup.spi.service.impl.ShiroLoginServiceImpl
+org.quinniup.spi.service.impl.SpringLoginServiceImpl
